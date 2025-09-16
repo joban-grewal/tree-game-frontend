@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tree Guardian - Web Game</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <main>
+    <h1>🌳 Tree Guardian</h1>
+    <section>
+      <h2>Upload a Tree Photo</h2>
+      <input id="imageInput" type="file" accept="image/*">
+      <button onclick="uploadImage()">Upload & Identify</button>
+      <div id="result"></div>
+    </section>
+    <section>
+        <h3>Your Points: <span id="user-points">0</span></h3>
+        <button onclick="loadLeaderboard()">Show Leaderboard</button>
+        <div id="leaderboard"></div>
+    </section>
+    <section>
+      <h2>My Tree Collection</h2>
+      <ul id="my-trees"></ul>
+    </section>
+  </main>
+  <script src="js/game.js"></script>
+</body>
+</html>
