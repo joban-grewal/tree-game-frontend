@@ -9,7 +9,7 @@ function uploadImage() {
     }
     const formData = new FormData();
     formData.append("image", input.files[0]);
-    fetch("http://127.0.0.1:5000/upload", {
+    fetch("https://tree-game-api.onrender.com/upload", {
         method: "POST",
         body: formData
     })
@@ -55,7 +55,7 @@ function addTree(treeInfo) {
 // Fetch user points from backend and update display
 function updatePoints() {
   // Call backend (simulate points here for demo)
-  fetch('http://127.0.0.1:5000/leaderboard') // or a dedicated points API
+  fetch('https://tree-game-api.onrender.com/leaderboard') // or a dedicated points API
     .then(res => res.json())
     .then(data => {
       // find your user points (for demo, just get demo_user)
@@ -66,7 +66,7 @@ function updatePoints() {
 
 // Load leaderboard
 function loadLeaderboard() {
-  fetch('http://127.0.0.1:5000/leaderboard')
+  fetch('https://tree-game-api.onrender.com/leaderboard')
     .then(res => res.json())
     .then(data => {
       const container = document.getElementById('leaderboard');
