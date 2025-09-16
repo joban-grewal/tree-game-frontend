@@ -1,4 +1,3 @@
-// Holds scanned trees in-memory (demo - use backend/db for real app)
 const treeCollection = [];
 
 function uploadImage() {
@@ -9,6 +8,7 @@ function uploadImage() {
     }
     const formData = new FormData();
     formData.append("image", input.files[0]);
+
     fetch("https://tree-game-api.onrender.com/upload", {
         method: "POST",
         body: formData
@@ -28,10 +28,10 @@ function uploadImage() {
     .catch(err => alert("Error: " + err));
 }
 
-// Add identified tree to collection and update UI
 function addTree(treeData) {
-    treeCollection.push(treeData.info.species + " (" + treeData.filename + ")");
+    treeCollection.push(`${treeData.info.species} (${treeData.filename})`);
     updateCollection();
+    updatePoints();
 }
 
 function updateCollection() {
@@ -44,32 +44,20 @@ function updateCollection() {
     });
 }
 
-// After a successful identification
-function addTree(treeInfo) {
-  const listItem = `${treeInfo.species} (Confidence: ${treeInfo.confidence}%)`;
-  treeCollection.push(listItem);
-  updateCollection();
-  updatePoints();  // refresh points
-}
-
-// Fetch user points from backend and update display
 function updatePoints() {
-  // Call backend (simulate points here for demo)
-  fetch('https://tree-game-api.onrender.com/leaderboard') // or a dedicated points API
-    .then(res => res.json())
-    .then(data => {
-      // find your user points (for demo, just get demo_user)
-      const userPoints = data.find(u => u.user === 'Demo User')?.points || 0;
-      document.getElementById('user-points').innerText = userPoints;
-    });
+    fetch('https://tree-game-api.onrender.com/leaderboard')
+        .then(res => res.json())
+        .then(data => {
+            const userPoints = data.find(u => u.user === 'Demo User')?.points || 0;
+            document.getElementById('user-points').innerText = userPoints;
+        });
 }
 
-// Load leaderboard
 function loadLeaderboard() {
-  fetch('https://tree-game-api.onrender.com/leaderboard')
-    .then(res => res.json())
-    .then(data => {
-      const container = document.getElementById('leaderboard');
-      container.innerHTML = '<h3>Leaderboard</h3>' + data.map(u => `<p>${u.user}: ${u.points} points</p>`).join('');
-    });
+    fetch('https://tree-game-api.onrender.com/leaderboard')
+        .then(res => res.json())
+        .then(data => {
+            const container = document.getElementById('leaderboard');
+            container.innerHTML = '<h3>Leaderboard</h3>' + data.map(u => `<p>${u.user}: ${u.points} points</p>`).join('');
+        });
 }
