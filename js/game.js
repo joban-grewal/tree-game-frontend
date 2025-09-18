@@ -15,6 +15,7 @@ function uploadImage() {
     })
     .then(response => response.json())
     .then(data => {
+        console.log("API response:", data);
         if (data.success) {
             addTree(data);
         }
@@ -23,7 +24,7 @@ function uploadImage() {
             <p><b>Species:</b> ${data.info.species}</p>
             <p><b>Confidence:</b> ${data.info.confidence}%</p>
             <p><b>Fact:</b> ${data.info.facts}</p>
-            <p><b>More Info:</b> ${data.info.wiki_summary}</p>
+            <p><b>More Info:</b> ${data.info.wiki_summary || 'No additional info available.'}</p>
         `;
     })
     .catch(err => alert("Error: " + err));
