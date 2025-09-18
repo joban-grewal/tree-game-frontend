@@ -1,140 +1,215 @@
 :root {
-  /* Green Color Scheme - Primary */
-  --light-mint-green: #d1fae5;
-  --fresh-green: #86efac;
+  /* Green Color Scheme */
+  --light-mint-green: #f0fdf4;
+  --fresh-green: #dcfce7;
   --medium-green: #22c55e;
   --forest-green: #16a34a;
   --deep-forest-green: #15803d;
-  /* Accent Colors */
-  --sunshine-yellow: #fbbf24;
-  --bright-yellow: #f59e0b;
-  --trust-blue: #3b82f6;
-  --water-blue: #0ea5e9;
-  /* Neutral Colors */
+
+  /* Accent & Neutral Colors */
+  --sunshine-yellow: #facc15;
   --pure-white: #ffffff;
   --light-gray: #f8fafc;
   --medium-gray: #64748b;
   --dark-gray: #334155;
+
   /* Typography */
   --font-primary: 'Poppins', sans-serif;
   --font-accent: 'Comfortaa', cursive;
+
   /* Shadows */
-  --soft-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --medium-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-    0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --deep-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
-    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --soft-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --medium-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
+/* --- Global Styles --- */
 body {
   margin: 0;
+  padding: 40px 20px;
   font-family: var(--font-primary);
   background: var(--light-mint-green);
   color: var(--dark-gray);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
 }
 
-main {
-  max-width: 650px;
-  margin: 40px auto;
+/* --- Main Game Box --- */
+.game-container {
+  width: 100%;
+  max-width: 700px;
   background: var(--pure-white);
-  border-radius: 20px;
+  border-radius: 24px;
   box-shadow: var(--medium-shadow);
-  padding: 2rem;
+  padding: 2rem 2.5rem;
+  box-sizing: border-box;
 }
 
-h1 {
-  color: var(--forest-green);
+/* --- Header --- */
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid var(--light-gray);
+  padding-bottom: 1.5rem;
+}
+
+.game-header h1 {
   font-family: var(--font-accent);
+  color: var(--forest-green);
+  margin: 0;
+  font-size: 2rem;
+}
+
+.user-controls {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.control-btn {
+  background: none;
+  border: none;
+  font-family: var(--font-primary);
+  font-weight: 600;
+  color: var(--medium-gray);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+}
+
+.control-btn:hover {
+  color: var(--forest-green);
+}
+
+.points-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--sunshine-yellow);
+}
+
+/* --- Upload Area --- */
+.upload-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.custom-file-upload {
+  border: 2px dashed var(--fresh-green);
+  color: var(--forest-green);
+  background-color: var(--light-gray);
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  width: 80%;
   text-align: center;
 }
 
-button {
-  background-color: var(--forest-green);
+.custom-file-upload:hover {
+  background-color: var(--fresh-green);
+}
+
+#upload-button {
+  background-color: var(--medium-green);
   color: var(--pure-white);
   border: none;
-  padding: 0.65rem 1.3rem;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  font-family: var(--font-primary);
-}
-
-button:hover {
-  background-color: var(--deep-forest-green);
-}
-
-/* Result area */
-#result {
-  margin-top: 1.5rem;
-  background: var(--fresh-green);
+  padding: 0.8rem 2.5rem;
   border-radius: 12px;
-  padding: 1rem 1.5rem;
-  color: var(--deep-forest-green);
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
   box-shadow: var(--soft-shadow);
 }
 
-/* Sidebar container */
-#sidebar {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  width: 320px;
-  background: var(--pure-white);
-  border-radius: 14px;
-  box-shadow: var(--deep-shadow);
-  font-family: var(--font-primary);
-  z-index: 999;
+#upload-button:hover {
+  background-color: var(--deep-forest-green);
+  transform: translateY(-2px);
 }
 
-/* Sidebar Header Buttons */
-.sidebar-header {
-  display: flex;
-  justify-content: space-between;
-  background: var(--medium-green);
-  color: var(--pure-white);
-  padding: 0.7rem 1rem;
-  border-radius: 14px 14px 0 0;
-  font-weight: 700;
-}
-
-.sidebar-header button {
-  background: var(--sunshine-yellow);
-  color: var(--deep-forest-green);
-  padding: 0.3rem 0.7rem;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.sidebar-content {
-  max-height: 350px;
-  overflow-y: auto;
-  padding: 1rem;
-  display: none;
-  color: var(--dark-gray);
-  font-size: 0.9rem;
-}
-
-.sidebar-content.active {
-  display: block;
-}
-
-ul, p {
-  margin: 0.25rem 0;
-}
-
-/* Responsive - center main content with space for sidebar */
-@media (min-width: 800px) {
-  main {
-    margin-right: 360px;
-  }
-}
-/* Add this new rule to your styles.css file */
-
-button:disabled {
+#upload-button:disabled {
   background-color: var(--medium-gray);
   cursor: not-allowed;
+  transform: translateY(0);
+}
+
+/* --- Result Area --- */
+.result-area {
+  background: var(--light-gray);
+  border-radius: 12px;
+  padding: 1.5rem;
+  color: var(--dark-gray);
+}
+
+.result-area h3 {
+  margin-top: 0;
+  color: var(--deep-forest-green);
+}
+
+/* --- Modal Styles --- */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal.active {
+  display: flex;
+}
+
+.modal-overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  position: relative;
+  background: var(--pure-white);
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: var(--medium-shadow);
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  font-family: var(--font-accent);
+  color: var(--forest-green);
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: var(--medium-gray);
+  cursor: pointer;
 }

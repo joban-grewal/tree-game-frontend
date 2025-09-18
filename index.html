@@ -7,28 +7,44 @@
     <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-    <main>
-        <h1>🌳 Tree Guardian</h1>
-        <input type="file" id="imageInput" accept="image/*" />
-        <button id="upload-button" onclick="uploadImage()">Upload & Identify</button>
+    <main class="game-container">
+        <header class="game-header">
+            <h1>🌳 Tree Guardian</h1>
+            <div class="user-controls">
+                <button id="leaderboard-btn" class="control-btn">🏆 Leaderboard</button>
+                <button id="collection-btn" class="control-btn">🌿 My Collection</button>
+                <div id="points-display" class="points-container">
+                    <span>🪙</span>
+                    <span id="user-points">0</span>
+                </div>
+            </div>
+        </header>
 
-        <div id="result"></div>
+        <section class="upload-area">
+            <label for="imageInput" class="custom-file-upload">Choose an Image</label>
+            <input type="file" id="imageInput" accept="image/*" />
+            <button id="upload-button">Upload & Identify</button>
+        </section>
 
-        <p><b>Your Points:</b> <span id="user-points">0</span></p>
+        <section id="result-area" class="result-area"></section>
     </main>
 
-    <div id="sidebar">
-        <div class="sidebar-header">
-            <span>My Tree Collection</span>
-            <button id="toggle-collection">Toggle</button>
+    <div id="leaderboard-modal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <h2>🏆 Leaderboard</h2>
+            <div id="leaderboard-content"></div>
         </div>
-        <div id="tree-collection" class="sidebar-content"></div>
+    </div>
 
-        <div class="sidebar-header" style="margin-top: 8px;">
-            <span>Leaderboard</span>
-            <button id="toggle-leaderboard">Toggle</button>
+    <div id="collection-modal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <h2>🌿 My Collection</h2>
+            <div id="collection-content"></div>
         </div>
-        <div id="leaderboard" class="sidebar-content"></div>
     </div>
 
     <script src="js/game.js"></script>
