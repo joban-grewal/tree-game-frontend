@@ -23,7 +23,6 @@ function uploadImage() {
             <h3>Result</h3>
             <p><b>Species:</b> ${data.info.species}</p>
             <p><b>Confidence:</b> ${data.info.confidence}%</p>
-            <p><b>Fact:</b> ${data.info.facts}</p>
             <p><b>More Info:</b> ${data.info.wiki_summary || 'No additional info available.'}</p>
         `;
     })
