@@ -1,29 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Tree Guardian - Web Game</title>
-  <link rel="stylesheet" href="css/styles.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tree Guardian</title>
+    <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <main>
-    <h1>🌳 Tree Guardian</h1>
-    <section>
-      <h2>Upload a Tree Photo</h2>
-      <input id="imageInput" type="file" accept="image/*">
-      <button onclick="uploadImage()">Upload & Identify</button>
-      <div id="result"></div>
-    </section>
-    <section>
-        <h3>Your Points: <span id="user-points">0</span></h3>
-        <button onclick="loadLeaderboard()">Show Leaderboard</button>
-        <div id="leaderboard"></div>
-    </section>
-    <section>
-      <h2>My Tree Collection</h2>
-      <ul id="my-trees"></ul>
-    </section>
-  </main>
-  <script src="js/game.js"></script>
+    <main>
+        <h1>🌳 Tree Guardian</h1>
+        <input type="file" id="imageInput" accept="image/*" />
+        <button onclick="uploadImage()">Upload & Identify</button>
+
+        <div id="result"></div>
+
+        <p><b>Your Points:</b> <span id="user-points">0</span></p>
+    </main>
+
+    <!-- Sidebar -->
+    <div id="sidebar">
+        <div class="sidebar-header">
+            <span>My Tree Collection</span>
+            <button id="toggle-collection">Toggle</button>
+        </div>
+        <div id="tree-collection" class="sidebar-content"></div>
+
+        <div class="sidebar-header" style="margin-top: 8px;">
+            <span>Leaderboard</span>
+            <button id="toggle-leaderboard">Toggle</button>
+        </div>
+        <div id="leaderboard" class="sidebar-content"></div>
+    </div>
+
+    <script src="game.js"></script>
 </body>
 </html>

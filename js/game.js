@@ -36,12 +36,12 @@ function addTree(treeData) {
 }
 
 function updateCollection() {
-    const ul = document.getElementById('my-trees');
-    ul.innerHTML = "";
+    const container = document.getElementById('tree-collection');
+    container.innerHTML = '';
     treeCollection.forEach(item => {
-        const li = document.createElement('li');
-        li.textContent = item;
-        ul.appendChild(li);
+        const p = document.createElement('p');
+        p.textContent = item;
+        container.appendChild(p);
     });
 }
 
@@ -59,6 +59,22 @@ function loadLeaderboard() {
         .then(res => res.json())
         .then(data => {
             const container = document.getElementById('leaderboard');
-            container.innerHTML = '<h3>Leaderboard</h3>' + data.map(u => `<p>${u.user}: ${u.points} points</p>`).join('');
+            container.innerHTML = '';
+            data.forEach(u => {
+                const p = document.createElement('p');
+                p.textContent = `${u.user}: ${u.points} points`;
+                container.appendChild(p);
+            });
         });
 }
+
+document.getElementById('toggle-collection').addEventListener('click', () => {
+    document.getElementById('tree-collection').classList.toggle('active');
+});
+
+document.getElementById('toggle-leaderboard').addEventListener('click', () => {
+    document.getElementById('leaderboard').classList.toggle('active');
+});
+
+// Load leaderboard initially (optional)
+loadLeaderboard();
