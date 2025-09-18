@@ -23,6 +23,7 @@ function uploadImage() {
             <p><b>Species:</b> ${data.info.species}</p>
             <p><b>Confidence:</b> ${data.info.confidence}%</p>
             <p><b>Fact:</b> ${data.info.facts}</p>
+            <p><b>More Info:</b> ${data.info.wiki_summary}</p>
         `;
     })
     .catch(err => alert("Error: " + err));
