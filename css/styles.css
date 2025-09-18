@@ -132,3 +132,9 @@ ul, p {
     margin-right: 360px;
   }
 }
+/* Add this new rule to your styles.css file */
+
+button:disabled {
+  background-color: var(--medium-gray);
+  cursor: not-allowed;
+}
