@@ -3,19 +3,44 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Tree Guardian - Your Forest Adventure</title>
+    <title>Tree Guardian - The Ultimate Forest Adventure</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🌳</text></svg>">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Font Awesome for Icons -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     
     <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
+    <!-- Preloader -->
+    <div id="preloader" class="preloader">
+        <div class="preloader-content">
+            <div class="tree-loader">
+                <div class="tree-trunk"></div>
+                <div class="tree-leaves">
+                    <span>🌳</span>
+                </div>
+            </div>
+            <h2 class="loading-text">Growing Your Forest...</h2>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Particle Background -->
+    <div id="particles-container" class="particles-container"></div>
+
     <!-- Animated Background Elements -->
     <div class="floating-leaves">
         <div class="leaf leaf-1">🍃</div>
@@ -23,19 +48,66 @@
         <div class="leaf leaf-3">🍂</div>
         <div class="leaf leaf-4">🌱</div>
         <div class="leaf leaf-5">🍀</div>
+        <div class="leaf leaf-6">🌾</div>
+        <div class="leaf leaf-7">🌲</div>
+        <div class="leaf leaf-8">🌴</div>
     </div>
 
+    <!-- Connection Status -->
+    <div class="connection-status online" id="connection-status">
+        <i class="fas fa-wifi"></i>
+        <span>Online</span>
+    </div>
+
+    <!-- Main Game Container -->
     <main class="game-container">
-        <!-- Decorative Corner Elements -->
+        <!-- Decorative Elements -->
         <div class="corner-decoration top-left"></div>
         <div class="corner-decoration top-right"></div>
+        <div class="corner-decoration bottom-left"></div>
+        <div class="corner-decoration bottom-right"></div>
         
+        <!-- Game Header -->
         <header class="game-header">
             <div class="logo-section">
-                <div class="logo-icon">🌳</div>
-                <h1>Tree Guardian</h1>
+                <div class="logo-icon animate__animated animate__bounceIn">🌳</div>
+                <div class="logo-text">
+                    <h1>Tree Guardian</h1>
+                    <p class="tagline">Protect the Forest</p>
+                </div>
             </div>
+            
+            <div class="user-stats">
+                <!-- Level Progress -->
+                <div class="level-badge">
+                    <div class="level-icon">⭐</div>
+                    <div class="level-info">
+                        <span class="level-label">Level</span>
+                        <span class="level-number" id="user-level">1</span>
+                    </div>
+                    <div class="level-progress">
+                        <div class="level-progress-bar" id="level-progress"></div>
+                    </div>
+                </div>
+                
+                <!-- Points Display -->
+                <div class="points-display">
+                    <div class="points-icon">💎</div>
+                    <span class="points-value" id="user-points">0</span>
+                </div>
+                
+                <!-- Streak Counter -->
+                <div class="streak-counter">
+                    <div class="streak-icon">🔥</div>
+                    <span class="streak-value" id="streak-count">0</span>
+                </div>
+            </div>
+            
             <div class="user-controls">
+                <button id="achievements-btn" class="control-btn glow-btn">
+                    <i class="fas fa-medal"></i>
+                    <span>Achievements</span>
+                </button>
                 <button id="leaderboard-btn" class="control-btn">
                     <i class="fas fa-trophy"></i>
                     <span>Leaderboard</span>
@@ -44,82 +116,234 @@
                     <i class="fas fa-book-open"></i>
                     <span>Collection</span>
                 </button>
-                <div id="points-display" class="points-container">
-                    <div class="coin-icon">🪙</div>
-                    <span id="user-points" class="points-value">0</span>
-                </div>
+                <button id="profile-btn" class="control-btn">
+                    <i class="fas fa-user-circle"></i>
+                </button>
             </div>
         </header>
 
-        <section class="upload-area">
-            <div class="upload-card">
-                <div class="upload-icon-container">
-                    <i class="fas fa-camera"></i>
-                    <div class="pulse-ring"></div>
+        <!-- Main Game Area -->
+        <div class="game-content">
+            <!-- Upload Section -->
+            <section class="upload-section">
+                <div class="upload-card glass-card">
+                    <div class="card-glow"></div>
+                    
+                    <!-- Mission Banner -->
+                    <div class="mission-banner">
+                        <span class="mission-icon">🎯</span>
+                        <span class="mission-text">Daily Mission: Identify 3 Trees</span>
+                        <span class="mission-progress">(0/3)</span>
+                    </div>
+                    
+                    <div class="upload-content">
+                        <div class="upload-icon-container">
+                            <div class="upload-icon-wrapper">
+                                <i class="fas fa-camera-retro"></i>
+                                <div class="pulse-ring"></div>
+                                <div class="pulse-ring delay-1"></div>
+                                <div class="pulse-ring delay-2"></div>
+                            </div>
+                        </div>
+                        
+                        <h2 class="upload-title gradient-text">Discover Your Tree!</h2>
+                        <p class="upload-subtitle">Snap a photo to identify and diagnose</p>
+                        
+                        <!-- Upload Options -->
+                        <div class="upload-options">
+                            <label for="imageInput" class="file-upload-btn">
+                                <input type="file" id="imageInput" accept="image/*" />
+                                <div class="btn-content">
+                                    <i class="fas fa-image"></i>
+                                    <span>Choose Photo</span>
+                                </div>
+                            </label>
+                            
+                            <button id="camera-btn" class="camera-btn">
+                                <i class="fas fa-camera"></i>
+                                <span>Take Photo</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Upload Button -->
+                        <button id="upload-button" class="main-action-btn" disabled>
+                            <span class="btn-text">Upload & Identify</span>
+                            <span class="btn-icon">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <div class="btn-shine"></div>
+                        </button>
+                        
+                        <!-- Image Preview -->
+                        <div id="image-preview-container" class="image-preview-container hidden">
+                            <img id="preview-image" src="" alt="Preview">
+                            <button id="remove-image" class="remove-image-btn">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <h2>Discover Your Tree!</h2>
-                <p class="upload-subtitle">Take or upload a photo to identify and diagnose</p>
-                
-                <label for="imageInput" class="custom-file-upload">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <span>Choose an Image</span>
-                </label>
-                <input type="file" id="imageInput" accept="image/*" />
-                
-                <div class="or-divider">
-                    <span>OR</span>
-                </div>
-                
-                <button id="upload-button" class="upload-btn">
-                    <span class="btn-text">Upload & Identify</span>
-                    <span class="btn-icon">🔍</span>
-                </button>
-            </div>
-        </section>
+            </section>
 
-        <section id="result-area" class="result-area"></section>
+            <!-- Results Section -->
+            <section id="result-section" class="result-section hidden">
+                <div id="result-area" class="result-area glass-card"></div>
+            </section>
 
-        <div id="health-check-container" class="health-check-container">
-            <div class="health-check-card">
-                <div class="health-icon-pulse">
-                    <i class="fas fa-heartbeat"></i>
+            <!-- Health Check Section -->
+            <section id="health-section" class="health-section hidden">
+                <div class="health-check-card glass-card">
+                    <div class="health-icon-container">
+                        <div class="health-icon">
+                            <i class="fas fa-heartbeat"></i>
+                        </div>
+                        <div class="health-pulse"></div>
+                    </div>
+                    <h3>Tree Health Analysis</h3>
+                    <p class="health-subtitle">Diagnose diseases and get care tips</p>
+                    <button id="health-check-btn" class="health-check-btn">
+                        <span>Run Diagnosis</span>
+                        <i class="fas fa-stethoscope"></i>
+                    </button>
                 </div>
-                <button id="health-check-btn">
-                    <span>Check Tree Health</span>
-                    <i class="fas fa-stethoscope"></i>
-                </button>
-            </div>
+                
+                <div id="health-result-area" class="health-result-area hidden"></div>
+            </section>
         </div>
 
-        <section id="health-result-area" class="result-area health-report"></section>
-
+        <!-- Quick Stats Bar -->
+        <div class="quick-stats">
+            <div class="stat-item">
+                <i class="fas fa-tree"></i>
+                <span id="trees-identified">0</span>
+                <label>Trees Found</label>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-star"></i>
+                <span id="accuracy-rate">0%</span>
+                <label>Accuracy</label>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-calendar-check"></i>
+                <span id="days-active">0</span>
+                <label>Days Active</label>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-medal"></i>
+                <span id="badges-earned">0</span>
+                <label>Badges</label>
+            </div>
+        </div>
     </main>
+
+    <!-- Achievements Modal -->
+    <div id="achievements-modal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content achievements-modal">
+            <button class="modal-close">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-header">
+                <i class="fas fa-medal modal-icon"></i>
+                <h2>Achievements</h2>
+            </div>
+            <div class="achievements-grid" id="achievements-content">
+                <!-- Achievements will be loaded here -->
+            </div>
+        </div>
+    </div>
 
     <!-- Leaderboard Modal -->
     <div id="leaderboard-modal" class="modal">
         <div class="modal-overlay"></div>
-        <div class="modal-content leaderboard-modal-content">
-            <button class="modal-close">&times;</button>
+        <div class="modal-content leaderboard-modal">
+            <button class="modal-close">
+                <i class="fas fa-times"></i>
+            </button>
             <div class="modal-header">
                 <i class="fas fa-trophy modal-icon"></i>
-                <h2>Leaderboard</h2>
+                <h2>Global Leaderboard</h2>
             </div>
-            <div id="leaderboard-content"></div>
+            <div class="leaderboard-tabs">
+                <button class="tab-btn active" data-tab="weekly">Weekly</button>
+                <button class="tab-btn" data-tab="monthly">Monthly</button>
+                <button class="tab-btn" data-tab="alltime">All Time</button>
+            </div>
+            <div id="leaderboard-content" class="leaderboard-content">
+                <!-- Leaderboard will be loaded here -->
+            </div>
         </div>
     </div>
 
     <!-- Collection Modal -->
     <div id="collection-modal" class="modal">
         <div class="modal-overlay"></div>
-        <div class="modal-content collection-modal-content">
-            <button class="modal-close">&times;</button>
+        <div class="modal-content collection-modal">
+            <button class="modal-close">
+                <i class="fas fa-times"></i>
+            </button>
             <div class="modal-header">
                 <i class="fas fa-book-open modal-icon"></i>
-                <h2>My Collection</h2>
+                <h2>My Tree Collection</h2>
             </div>
-            <div id="collection-content"></div>
+            <div class="collection-filter">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="healthy">Healthy</button>
+                <button class="filter-btn" data-filter="diseased">Diseased</button>
+            </div>
+            <div id="collection-content" class="collection-content">
+                <!-- Collection will be loaded here -->
+            </div>
         </div>
     </div>
+
+    <!-- Profile Modal -->
+    <div id="profile-modal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content profile-modal">
+            <button class="modal-close">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h2 id="profile-name">Forest Guardian</h2>
+                <p class="profile-title">Tree Expert</p>
+            </div>
+            <div class="profile-stats-grid">
+                <!-- Profile stats will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Achievement Popup -->
+    <div id="achievement-popup" class="achievement-popup hidden">
+        <div class="achievement-content">
+            <div class="achievement-icon">🏆</div>
+            <h3>Achievement Unlocked!</h3>
+            <p id="achievement-name"></p>
+        </div>
+    </div>
+
+    <!-- Level Up Animation -->
+    <div id="levelup-animation" class="levelup-animation hidden">
+        <div class="levelup-content">
+            <h2 class="levelup-title">LEVEL UP!</h2>
+            <div class="levelup-number" id="new-level">2</div>
+            <div class="levelup-rewards">
+                <span>+100 Bonus Points</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notification-container" class="notification-container"></div>
+
+    <!-- Sound Toggle -->
+    <button id="sound-toggle" class="sound-toggle">
+        <i class="fas fa-volume-up"></i>
+    </button>
 
     <script src="js/game.js"></script>
 </body>
