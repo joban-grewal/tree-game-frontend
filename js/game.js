@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const treeCollection = [];
+    let currentSpecies = ""; // NEW: Variable to store the identified species
 
     // --- Element References ---
     const imageInput = document.getElementById('imageInput');
@@ -66,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
+                currentSpecies = data.info.species; // CHANGED: Save the species name
                 addTree(data);
                 resultArea.innerHTML = `
                     <h3>Identification Result</h3>
@@ -99,6 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const formData = new FormData();
         formData.append("image", imageInput.files[0]);
+        formData.append("species", currentSpecies); // CHANGED: Send the species name to the backend
 
         fetch("https://tree-game-api.onrender.com/diagnose", { method: "POST", body: formData })
         .then(response => response.json())
@@ -111,7 +114,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div>${data.care_advice}</div>
                 `;
             } else {
-                healthResultArea.innerHTML = `<p><b>Error:</b> Could not complete health diagnosis.</p>`;
+                // CHANGED: Display the specific error from the backend
+                healthResultArea.innerHTML = `<p><b>Error:</b> ${data.error || 'Could not complete health diagnosis.'}</p>`;
             }
         })
         .catch(err => {
@@ -127,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function addTree(treeData) {
         treeCollection.push(`${treeData.info.species} (${treeData.filename})`);
         updateCollection();
-        loadLeaderboard(); // This will also update the points display
+        loadLeaderboard();
     }
 
     function updateCollection() {
@@ -157,7 +161,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     p.textContent = `${u.user}: ${u.points} points`;
                     container.appendChild(p);
                 });
-                // Update the main points display after fetching the leaderboard
                 const demoUser = data.find(u => u.user === 'Demo User');
                 if (demoUser) {
                     userPointsSpan.innerText = demoUser.points;
