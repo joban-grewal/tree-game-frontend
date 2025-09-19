@@ -3,52 +3,120 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Tree Guardian</title>
+    <title>Tree Guardian - Your Forest Adventure</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
+    <!-- Animated Background Elements -->
+    <div class="floating-leaves">
+        <div class="leaf leaf-1">🍃</div>
+        <div class="leaf leaf-2">🌿</div>
+        <div class="leaf leaf-3">🍂</div>
+        <div class="leaf leaf-4">🌱</div>
+        <div class="leaf leaf-5">🍀</div>
+    </div>
+
     <main class="game-container">
+        <!-- Decorative Corner Elements -->
+        <div class="corner-decoration top-left"></div>
+        <div class="corner-decoration top-right"></div>
+        
         <header class="game-header">
-            <h1>🌳 Tree Guardian</h1>
+            <div class="logo-section">
+                <div class="logo-icon">🌳</div>
+                <h1>Tree Guardian</h1>
+            </div>
             <div class="user-controls">
-                <button id="leaderboard-btn" class="control-btn">🏆 Leaderboard</button>
-                <button id="collection-btn" class="control-btn">🌿 My Collection</button>
+                <button id="leaderboard-btn" class="control-btn">
+                    <i class="fas fa-trophy"></i>
+                    <span>Leaderboard</span>
+                </button>
+                <button id="collection-btn" class="control-btn">
+                    <i class="fas fa-book-open"></i>
+                    <span>Collection</span>
+                </button>
                 <div id="points-display" class="points-container">
-                    <span>🪙</span>
-                    <span id="user-points">0</span>
+                    <div class="coin-icon">🪙</div>
+                    <span id="user-points" class="points-value">0</span>
                 </div>
             </div>
         </header>
 
         <section class="upload-area">
-            <label for="imageInput" class="custom-file-upload">Choose an Image</label>
-            <input type="file" id="imageInput" accept="image/*" />
-            <button id="upload-button">Upload & Identify</button>
+            <div class="upload-card">
+                <div class="upload-icon-container">
+                    <i class="fas fa-camera"></i>
+                    <div class="pulse-ring"></div>
+                </div>
+                <h2>Discover Your Tree!</h2>
+                <p class="upload-subtitle">Take or upload a photo to identify and diagnose</p>
+                
+                <label for="imageInput" class="custom-file-upload">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <span>Choose an Image</span>
+                </label>
+                <input type="file" id="imageInput" accept="image/*" />
+                
+                <div class="or-divider">
+                    <span>OR</span>
+                </div>
+                
+                <button id="upload-button" class="upload-btn">
+                    <span class="btn-text">Upload & Identify</span>
+                    <span class="btn-icon">🔍</span>
+                </button>
+            </div>
         </section>
 
         <section id="result-area" class="result-area"></section>
 
         <div id="health-check-container" class="health-check-container">
-             <button id="health-check-btn">🩺 Check Health</button>
+            <div class="health-check-card">
+                <div class="health-icon-pulse">
+                    <i class="fas fa-heartbeat"></i>
+                </div>
+                <button id="health-check-btn">
+                    <span>Check Tree Health</span>
+                    <i class="fas fa-stethoscope"></i>
+                </button>
+            </div>
         </div>
 
         <section id="health-result-area" class="result-area health-report"></section>
 
     </main>
 
+    <!-- Leaderboard Modal -->
     <div id="leaderboard-modal" class="modal">
         <div class="modal-overlay"></div>
-        <div class="modal-content">
+        <div class="modal-content leaderboard-modal-content">
             <button class="modal-close">&times;</button>
-            <h2>🏆 Leaderboard</h2>
+            <div class="modal-header">
+                <i class="fas fa-trophy modal-icon"></i>
+                <h2>Leaderboard</h2>
+            </div>
             <div id="leaderboard-content"></div>
         </div>
     </div>
+
+    <!-- Collection Modal -->
     <div id="collection-modal" class="modal">
         <div class="modal-overlay"></div>
-        <div class="modal-content">
+        <div class="modal-content collection-modal-content">
             <button class="modal-close">&times;</button>
-            <h2>🌿 My Collection</h2>
+            <div class="modal-header">
+                <i class="fas fa-book-open modal-icon"></i>
+                <h2>My Collection</h2>
+            </div>
             <div id="collection-content"></div>
         </div>
     </div>
