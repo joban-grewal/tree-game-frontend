@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const userPointsSpan = document.getElementById('user-points');
     const customUploadLabel = document.querySelector('.custom-file-upload');
 
-    // --- NEW: Health Feature References ---
+    // --- Health Feature References ---
     const healthCheckContainer = document.getElementById('health-check-container');
     const healthCheckBtn = document.getElementById('health-check-btn');
     const healthResultArea = document.getElementById('health-result-area');
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Event Listeners ---
     uploadButton.addEventListener('click', uploadImage);
-    healthCheckBtn.addEventListener('click', checkHealth); // NEW
+    healthCheckBtn.addEventListener('click', checkHealth);
 
     leaderboardBtn.addEventListener('click', () => {
         loadLeaderboard();
@@ -56,13 +56,13 @@ document.addEventListener('DOMContentLoaded', () => {
         uploadButton.disabled = true;
         uploadButton.textContent = "Identifying...";
         resultArea.innerHTML = '';
-        healthCheckContainer.style.display = 'none'; // Hide health button
-        healthResultArea.innerHTML = ''; // Clear old health report
+        healthCheckContainer.style.display = 'none';
+        healthResultArea.innerHTML = '';
 
         const formData = new FormData();
         formData.append("image", imageInput.files[0]);
 
-        fetch("http://127.0.0.1:5000/upload", { method: "POST", body: formData })
+        fetch("https://tree-game-api.onrender.com/upload", { method: "POST", body: formData })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p><b>Confidence:</b> ${data.info.confidence}%</p>
                     <p><b>More Info:</b> ${data.info.wiki_summary || 'No additional info available.'}</p>
                 `;
-                healthCheckContainer.style.display = 'block'; // Show health button
+                healthCheckContainer.style.display = 'block';
             } else {
                 resultArea.innerHTML = `<p><b>Error:</b> ${data.message || 'Could not identify the tree.'}</p>`;
             }
@@ -88,7 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- NEW: Health Check Function ---
     function checkHealth() {
         if (!imageInput.files.length) {
             alert("No image available for health check.");
@@ -101,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const formData = new FormData();
         formData.append("image", imageInput.files[0]);
 
-        fetch("http://127.0.0.1:5000/diagnose", { method: "POST", body: formData })
+        fetch("https://tree-game-api.onrender.com/diagnose", { method: "POST", body: formData })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -125,11 +124,52 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function addTree(treeData) { /* ... (rest of the functions are the same) ... */ }
-    function updateCollection() { /* ... */ }
-    function updatePoints() { /* ... */ }
-    function loadLeaderboard() { /* ... */ }
+    function addTree(treeData) {
+        treeCollection.push(`${treeData.info.species} (${treeData.filename})`);
+        updateCollection();
+        loadLeaderboard(); // This will also update the points display
+    }
+
+    function updateCollection() {
+        const container = document.getElementById('collection-content');
+        container.innerHTML = '';
+        if (treeCollection.length === 0) {
+            container.innerHTML = '<p>You haven\'t collected any trees yet!</p>';
+            return;
+        }
+        treeCollection.forEach(item => {
+            const p = document.createElement('p');
+            p.textContent = item;
+            container.appendChild(p);
+        });
+    }
+
+    function loadLeaderboard() {
+        const container = document.getElementById('leaderboard-content');
+        container.innerHTML = '<p>Loading...</p>';
+
+        fetch('https://tree-game-api.onrender.com/leaderboard')
+            .then(res => res.json())
+            .then(data => {
+                container.innerHTML = '';
+                data.forEach(u => {
+                    const p = document.createElement('p');
+                    p.textContent = `${u.user}: ${u.points} points`;
+                    container.appendChild(p);
+                });
+                // Update the main points display after fetching the leaderboard
+                const demoUser = data.find(u => u.user === 'Demo User');
+                if (demoUser) {
+                    userPointsSpan.innerText = demoUser.points;
+                }
+            })
+            .catch(err => {
+                console.error("Could not load leaderboard:", err);
+                container.innerHTML = '<p>Could not load leaderboard data.</p>';
+            });
+    }
     
-    // Paste your existing addTree, updateCollection, updatePoints, and loadLeaderboard functions here
-    // For brevity, they are omitted, but they are unchanged.
+    // --- Initial Load ---
+    loadLeaderboard();
+    updateCollection();
 });
