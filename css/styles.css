@@ -306,7 +306,7 @@ h1, h2, h3, h4, h5, h6 {
   position: relative;
   z-index: 10;
   animation: slideUp 0.6s var(--spring);
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--light-mint-green);
 }
 
 @keyframes slideUp {
@@ -514,13 +514,13 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: white;
-  border: 2px solid var(--light-gray);
+  background: var(--pure-white);
+  border: 2px solid var(--medium-green);
   padding: 0.75rem 1.25rem;
   border-radius: 15px;
   font-family: var(--font-primary);
   font-weight: 600;
-  color: var(--dark-gray);
+  color: var(--medium-green);
   cursor: pointer;
   transition: all var(--transition-base);
   position: relative;
@@ -548,8 +548,8 @@ h1, h2, h3, h4, h5, h6 {
 .control-btn:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
-  border-color: var(--forest-medium);
-  color: white;
+  border-color: var(--medium-green);
+  color: var(--pure-white);
   z-index: 1;
 }
 
@@ -575,10 +575,9 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ===== GLASS CARD STYLE ===== */
 .glass-card {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
+  background: var(--pure-white);
   border-radius: 25px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--light-mint-green);
   box-shadow: var(--shadow-xl);
   padding: 2rem;
   position: relative;
@@ -1447,6 +1446,65 @@ h1, h2, h3, h4, h5, h6 {
 .sound-toggle.muted {
   background: var(--medium-gray);
   color: white;
+}
+
+/* ===== EchoPind Base Components (from EchoPind App.css) ===== */
+.btn {
+  display: inline-block;
+  padding: 12px 24px;
+  border-radius: 25px;
+  text-decoration: none;
+  font-family: var(--font-primary);
+  font-weight: 500;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--soft-shadow);
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--medium-green) 0%, var(--forest-green) 100%);
+  color: var(--pure-white);
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  background: linear-gradient(135deg, var(--forest-green) 0%, var(--deep-forest-green) 100%);
+}
+.btn-secondary {
+  background: var(--pure-white);
+  color: var(--medium-green);
+  border: 2px solid var(--medium-green);
+}
+.btn-secondary:hover {
+  background: var(--medium-green);
+  color: var(--pure-white);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+.card {
+  background: var(--pure-white);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: var(--soft-shadow);
+  transition: all 0.3s ease;
+  border: 1px solid var(--light-mint-green);
+}
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-2xl);
+}
+.eco-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, var(--fresh-green) 0%, var(--medium-green) 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: var(--pure-white);
+  margin-bottom: 1rem;
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
