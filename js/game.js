@@ -202,24 +202,6 @@ class TreeGuardianGame {
     }
 
     // ===== IMAGE HANDLING =====
-    handleImageSelect(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-        
-        // Validate file
-        if (!this.validateFile(file)) return;
-        
-        // Show preview
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            this.elements.previewImage.src = e.target.result;
-            this.elements.previewContainer.classList.remove('hidden');
-            this.elements.uploadButton.disabled = false;
-            this.state.currentImage = file;
-        };
-        reader.readAsDataURL(file);
-    }
-
     validateFile(file) {
         const maxSize = 10 * 1024 * 1024; // 10MB
         const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
@@ -245,9 +227,52 @@ class TreeGuardianGame {
     }
 
     openCamera() {
-        // For mobile devices - trigger file input with camera
-        this.elements.imageInput.setAttribute('capture', 'environment');
-        this.elements.imageInput.click();
+        // Create a file input specifically for camera
+        const cameraInput = document.createElement('input');
+        cameraInput.type = 'file';
+        cameraInput.accept = 'image/*';
+        cameraInput.capture = 'environment'; // Use back camera on mobile
+        
+        cameraInput.addEventListener('change', (e) => {
+            if (e.target.files && e.target.files[0]) {
+                // Process the captured image
+                const file = e.target.files[0];
+                this.elements.imageInput.files = e.target.files;
+                this.handleImageSelect({ target: { files: [file] } });
+            }
+        });
+        
+        // Trigger the camera
+        cameraInput.click();
+    }
+
+    handleImageSelect(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        // Validate file
+        if (!this.validateFile(file)) return;
+        
+        // Show loading state
+        this.showNotification('Processing image...', 'info');
+        
+        // Create preview
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            this.elements.previewImage.src = e.target.result;
+            this.elements.previewContainer.classList.remove('hidden');
+            this.elements.uploadButton.disabled = false;
+            this.state.currentImage = file;
+            
+            // Update the file input label
+            const fileName = file.name;
+            const uploadLabel = document.querySelector('.file-upload-btn .btn-content span');
+            if (uploadLabel) {
+                uploadLabel.textContent = fileName.length > 20 ? 
+                    fileName.substring(0, 20) + '...' : fileName;
+            }
+        };
+        reader.readAsDataURL(file);
     }
 
     // ===== UPLOAD & IDENTIFY =====
@@ -298,21 +323,56 @@ class TreeGuardianGame {
         }
     }
 
+    // ===== UPDATED: Handle Identification Success with Duplicate Prevention =====
     handleIdentificationSuccess(data) {
         this.state.currentSpecies = data.info.species;
+        
+        // Check if tree already exists in collection
+        const existingTreeIndex = this.state.collection.findIndex(
+            tree => tree.species.toLowerCase() === data.info.species.toLowerCase()
+        );
+        
+        let isNewDiscovery = false;
+        let message = '';
+        
+        if (existingTreeIndex === -1) {
+            // New tree - add to collection
+            isNewDiscovery = true;
+            this.state.collection.push({
+                species: data.info.species,
+                confidence: data.info.confidence,
+                timestamp: new Date().toISOString(),
+                firstDiscovered: new Date().toISOString(),
+                timesIdentified: 1,
+                bestConfidence: data.info.confidence,
+                health: 'unknown'
+            });
+            message = `🎉 New Discovery! ${data.info.species} added to your collection!`;
+            
+            // Bonus points for new discovery
+            this.state.user.points += 20; // Extra 20 points for new tree
+            
+        } else {
+            // Existing tree - update if better confidence
+            const existingTree = this.state.collection[existingTreeIndex];
+            existingTree.timesIdentified++;
+            existingTree.lastSeen = new Date().toISOString();
+            
+            if (data.info.confidence > existingTree.bestConfidence) {
+                existingTree.bestConfidence = data.info.confidence;
+                existingTree.confidence = data.info.confidence;
+                message = `📸 Better photo! Confidence improved to ${data.info.confidence}%`;
+            } else {
+                message = `✓ ${data.info.species} already in collection (seen ${existingTree.timesIdentified} times)`;
+            }
+            
+            this.state.collection[existingTreeIndex] = existingTree;
+        }
         
         // Update stats
         this.state.stats.treesIdentified++;
         this.state.user.points += data.points_earned || 10;
         this.state.user.experience += 20;
-        
-        // Add to collection
-        this.state.collection.push({
-            species: data.info.species,
-            confidence: data.info.confidence,
-            timestamp: new Date().toISOString(),
-            health: 'unknown'
-        });
         
         // Update daily mission
         if (!this.state.dailyMission.completed) {
@@ -322,8 +382,18 @@ class TreeGuardianGame {
             }
         }
         
-        // Display results
-        this.displayIdentificationResult(data);
+        // Display results with collection status
+        this.displayIdentificationResult(data, isNewDiscovery, message);
+        
+        // Show special notification for collection status
+        if (isNewDiscovery) {
+            this.showNotification(message, 'success');
+            // Play special sound for new discovery
+            this.sounds.achievement();
+        } else {
+            this.showNotification(message, 'info');
+            this.sounds.success();
+        }
         
         // Check for achievements
         this.checkAchievements();
@@ -331,34 +401,54 @@ class TreeGuardianGame {
         // Check for level up
         this.checkLevelUp();
         
-        // Play sound
-        this.sounds.success();
-        
         // Save state
         this.saveState();
         this.updateUI();
     }
 
-    displayIdentificationResult(data) {
+    // ===== UPDATED: Display Result with Collection Status =====
+    displayIdentificationResult(data, isNewDiscovery = false, collectionMessage = '') {
         this.elements.resultSection.classList.remove('hidden');
+        const wikiSummary = data.info.wiki_summary || 'No additional information available.';
+        
+        // Get collection stats for this tree
+        const treeInCollection = this.state.collection.find(
+            tree => tree.species.toLowerCase() === data.info.species.toLowerCase()
+        );
+        
         this.elements.resultArea.innerHTML = `
-            <div class="result-success animate-in">
+            <div class="result-success glass-card animate-in">
                 <div class="result-header">
                     <div class="result-icon">🌳</div>
                     <div>
                         <h3>Tree Identified Successfully!</h3>
-                        <p class="result-subtitle">+${data.points_earned || 10} Points Earned</p>
+                        <p class="result-subtitle">+${data.points_earned || 10} Points ${isNewDiscovery ? '+ 20 Discovery Bonus!' : ''}</p>
                     </div>
                 </div>
                 
+                ${isNewDiscovery ? `
+                    <div class="new-discovery-banner">
+                        <i class="fas fa-star"></i>
+                        <span>NEW DISCOVERY!</span>
+                        <i class="fas fa-star"></i>
+                    </div>
+                ` : ''}
+                
+                ${!isNewDiscovery && treeInCollection ? `
+                    <div class="collection-status">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Already in collection • Seen ${treeInCollection.timesIdentified} times • Best: ${treeInCollection.bestConfidence}%</span>
+                    </div>
+                ` : ''}
+                
                 <div class="result-details">
                     <div class="detail-item">
-                        <label>Species</label>
+                        <label><i class="fas fa-tree"></i> Species</label>
                         <span class="detail-value">${data.info.species}</span>
                     </div>
                     
                     <div class="detail-item">
-                        <label>Confidence</label>
+                        <label><i class="fas fa-percentage"></i> Confidence</label>
                         <div class="confidence-meter">
                             <div class="confidence-bar" style="width: ${data.info.confidence}%">
                                 ${data.info.confidence}%
@@ -366,33 +456,43 @@ class TreeGuardianGame {
                         </div>
                     </div>
                     
-                    ${data.info.wiki_summary ? `
                     <div class="detail-item full-width">
-                        <label>About This Tree</label>
-                        <p class="wiki-summary">${data.info.wiki_summary}</p>
+                        <label><i class="fas fa-info-circle"></i> About This Tree</label>
+                        <div class="wiki-summary-box">
+                            <p>${wikiSummary}</p>
+                            ${data.info.species !== 'Unknown' ? `
+                                <a href="https://en.wikipedia.org/wiki/${data.info.species.split('(')[0].trim().replace(/ /g, '_')}" 
+                                target="_blank" class="wiki-link">
+                                    <i class="fas fa-external-link-alt"></i> Learn more on Wikipedia
+                                </a>
+                            ` : ''}
+                        </div>
                     </div>
-                    ` : ''}
                 </div>
                 
                 <div class="result-actions">
                     <button class="action-btn share-btn" onclick="game.shareResult()">
                         <i class="fas fa-share-alt"></i> Share
                     </button>
-                    <button class="action-btn save-btn" onclick="game.saveToCollection()">
-                        <i class="fas fa-bookmark"></i> Save
-                    </button>
+                    ${isNewDiscovery ? `
+                        <button class="action-btn celebrate-btn" onclick="game.celebrateDiscovery()">
+                            <i class="fas fa-sparkles"></i> Celebrate!
+                        </button>
+                    ` : ''}
                 </div>
             </div>
         `;
         
         // Show health check if supported
+        const speciesName = data.info.species.toLowerCase();
         const isSupported = this.supportedPlants.some(plant => 
-            data.info.species.toLowerCase().includes(plant)
+            speciesName.includes(plant)
         );
         
         if (isSupported) {
             this.elements.healthSection.classList.remove('hidden');
             this.elements.healthCheckBtn.disabled = false;
+            this.showNotification('Health check available for this plant!', 'success');
         } else {
             this.elements.healthSection.classList.add('hidden');
         }
@@ -417,6 +517,27 @@ class TreeGuardianGame {
         `;
         
         this.sounds.error();
+    }
+
+    // ===== NEW: Celebrate Discovery Function =====
+    celebrateDiscovery() {
+        // Create confetti effect
+        const colors = ['#ffd93d', '#6BCB77', '#4D96FF', '#FF6B6B'];
+        const confettiCount = 50;
+        
+        for (let i = 0; i < confettiCount; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.animationDelay = Math.random() * 3 + 's';
+            confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            document.body.appendChild(confetti);
+            
+            setTimeout(() => confetti.remove(), 5000);
+        }
+        
+        this.showNotification('🎊 Congratulations on your discovery!', 'success');
     }
 
     // ===== HEALTH CHECK =====
@@ -446,6 +567,17 @@ class TreeGuardianGame {
             
             if (data.success) {
                 this.displayHealthResult(data);
+                
+                // Update health status in collection
+                const treeIndex = this.state.collection.findIndex(
+                    tree => tree.species.toLowerCase() === this.state.currentSpecies.toLowerCase()
+                );
+                if (treeIndex !== -1) {
+                    const isHealthy = data.diagnosis.toLowerCase().includes('healthy');
+                    this.state.collection[treeIndex].health = isHealthy ? 'healthy' : 'diseased';
+                    this.saveState();
+                }
+                
                 this.sounds.success();
             } else {
                 this.showNotification(data.error || 'Health check failed', 'error');
@@ -494,18 +626,13 @@ class TreeGuardianGame {
                 </div>
             </div>
         `;
-        
-        // Update last item in collection
-        if (this.state.collection.length > 0) {
-            this.state.collection[this.state.collection.length - 1].health = 
-                isHealthy ? 'healthy' : 'diseased';
-        }
-        
-        this.saveState();
     }
 
     // ===== ACHIEVEMENTS SYSTEM =====
     checkAchievements() {
+        // Check unique species achievement
+        const uniqueSpecies = this.state.collection.length;
+        
         this.achievements.forEach(achievement => {
             if (this.state.user.achievements.includes(achievement.id)) return;
             
@@ -513,7 +640,8 @@ class TreeGuardianGame {
             
             switch (achievement.type) {
                 case 'trees':
-                    unlocked = this.state.stats.treesIdentified >= achievement.requirement;
+                    // Use unique species count instead of total identifications
+                    unlocked = uniqueSpecies >= achievement.requirement;
                     break;
                 case 'streak':
                     unlocked = this.state.user.streak >= achievement.requirement;
@@ -688,7 +816,7 @@ class TreeGuardianGame {
         
         switch (achievement.type) {
             case 'trees':
-                current = this.state.stats.treesIdentified;
+                current = this.state.collection.length; // Use unique species count
                 break;
             case 'streak':
                 current = this.state.user.streak;
@@ -733,6 +861,7 @@ class TreeGuardianGame {
         }
     }
 
+    // ===== UPDATED: Enhanced Collection Display =====
     loadCollection(filter = 'all') {
         const container = document.getElementById('collection-content');
         container.innerHTML = '';
@@ -742,12 +871,37 @@ class TreeGuardianGame {
                 <div class="empty-state">
                     <i class="fas fa-tree"></i>
                     <p>No trees collected yet!</p>
-                    <p class="hint">Start by uploading a tree image</p>
+                    <p class="hint">Start discovering unique tree species!</p>
                 </div>
             `;
             return;
         }
         
+        // Add collection stats header
+        const uniqueSpecies = this.state.collection.length;
+        const totalIdentifications = this.state.collection.reduce((sum, tree) => sum + (tree.timesIdentified || 1), 0);
+        
+        const statsHeader = document.createElement('div');
+        statsHeader.className = 'collection-stats-header';
+        statsHeader.innerHTML = `
+            <div class="collection-summary">
+                <div class="summary-item">
+                    <i class="fas fa-dna"></i>
+                    <span>${uniqueSpecies} Unique Species</span>
+                </div>
+                <div class="summary-item">
+                    <i class="fas fa-camera"></i>
+                    <span>${totalIdentifications} Total Scans</span>
+                </div>
+                <div class="summary-item">
+                    <i class="fas fa-percentage"></i>
+                    <span>${Math.round(this.state.collection.reduce((sum, t) => sum + (t.bestConfidence || t.confidence), 0) / uniqueSpecies)}% Avg Confidence</span>
+                </div>
+            </div>
+        `;
+        container.appendChild(statsHeader);
+        
+        // Filter collection
         let filtered = this.state.collection;
         if (filter === 'healthy') {
             filtered = filtered.filter(tree => tree.health === 'healthy');
@@ -755,23 +909,42 @@ class TreeGuardianGame {
             filtered = filtered.filter(tree => tree.health === 'diseased');
         }
         
-        filtered.forEach(tree => {
+        // Create grid
+        const grid = document.createElement('div');
+        grid.className = 'collection-grid';
+        
+        filtered.forEach((tree, index) => {
             const card = document.createElement('div');
-            card.className = 'tree-card';
+            card.className = 'tree-card enhanced';
             card.innerHTML = `
+                <div class="tree-number">#${index + 1}</div>
                 <div class="tree-icon">🌳</div>
                 <div class="tree-name">${tree.species}</div>
-                <div class="tree-date">${new Date(tree.timestamp).toLocaleDateString()}</div>
+                <div class="tree-stats">
+                    <div class="stat-badge">
+                        <i class="fas fa-percentage"></i> ${tree.bestConfidence || tree.confidence}%
+                    </div>
+                    <div class="stat-badge">
+                        <i class="fas fa-eye"></i> ${tree.timesIdentified || 1}x
+                    </div>
+                </div>
+                <div class="tree-date">
+                    <i class="fas fa-calendar"></i> ${new Date(tree.firstDiscovered || tree.timestamp).toLocaleDateString()}
+                </div>
                 ${tree.health !== 'unknown' ? `
                     <div class="tree-health ${tree.health}">${tree.health}</div>
                 ` : ''}
             `;
-            container.appendChild(card);
+            grid.appendChild(card);
         });
+        
+        container.appendChild(grid);
     }
 
     loadProfile() {
         const container = document.querySelector('.profile-stats-grid');
+        const uniqueSpecies = this.state.collection.length;
+        
         container.innerHTML = `
             <div class="profile-stat">
                 <i class="fas fa-trophy"></i>
@@ -790,8 +963,8 @@ class TreeGuardianGame {
             </div>
             <div class="profile-stat">
                 <i class="fas fa-tree"></i>
-                <span class="stat-value">${this.state.stats.treesIdentified}</span>
-                <span class="stat-label">Trees Found</span>
+                <span class="stat-value">${uniqueSpecies}</span>
+                <span class="stat-label">Unique Trees</span>
             </div>
             <div class="profile-stat">
                 <i class="fas fa-medal"></i>
@@ -819,8 +992,9 @@ class TreeGuardianGame {
         // Update streak
         this.elements.streakCount.textContent = this.state.user.streak;
         
-        // Update stats
-        this.elements.treesIdentified.textContent = this.state.stats.treesIdentified;
+        // Update stats - show unique species instead of total identifications
+        const uniqueSpecies = this.state.collection.length;
+        this.elements.treesIdentified.textContent = uniqueSpecies;
         this.elements.accuracyRate.textContent = `${this.state.stats.accuracy || 0}%`;
         this.elements.daysActive.textContent = this.state.stats.daysActive;
         this.elements.badgesEarned.textContent = this.state.stats.badgesEarned;
@@ -975,7 +1149,9 @@ class TreeGuardianGame {
     hidePreloader() {
         setTimeout(() => {
             const preloader = document.getElementById('preloader');
-            preloader.classList.add('hidden');
+            if (preloader) {
+                preloader.classList.add('hidden');
+            }
         }, 2000);
     }
 }
