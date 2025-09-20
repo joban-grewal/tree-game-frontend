@@ -117,6 +117,10 @@
                     <i class="fas fa-book-open"></i>
                     <span>Collection</span>
                 </button>
+                <button id="pet-btn" class="control-btn">
+                    <i class="fas fa-dragon"></i>
+                    <span>Your Pet</span>
+                </button>
                 <button id="profile-btn" class="control-btn">
                     <i class="fas fa-user-circle"></i>
                 </button>
@@ -315,6 +319,19 @@
             <div class="profile-stats-grid">
                 <!-- Profile stats will be loaded here -->
             </div>
+        </div>
+    </div>
+    <div id="pet-modal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content pet-modal">
+            <button class="modal-close">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-header">
+                <i class="fas fa-dragon modal-icon"></i>
+                <h2>Your Dragon Pet</h2>
+            </div>
+            <iframe id="pet-iframe" src="petfinal.html" title="Dragon Pet Game"></iframe>
         </div>
     </div>
 

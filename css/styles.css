@@ -2105,3 +2105,19 @@ h1, h2, h3, h4, h5, h6 {
     gap: 1.5rem;
     margin-top: 1rem;
 }
+/* Add this to the bottom of styles.css */
+
+/* Pet Game Modal & Iframe Styles */
+.pet-modal .modal-content {
+    /* Make the modal wider for the game */
+    max-width: 1024px; 
+}
+
+#pet-iframe {
+    width: 100%;
+    height: 70vh; /* 70% of the viewport height */
+    border: none;
+    border-radius: 15px;
+    background-color: var(--light-gray);
+    margin-top: 1rem;
+}

@@ -105,6 +105,8 @@ class TreeGuardianGame {
             leaderboardModal: document.getElementById('leaderboard-modal'),
             collectionModal: document.getElementById('collection-modal'),
             profileModal: document.getElementById('profile-modal'),
+            petBtn: document.getElementById('pet-btn'),
+            petModal: document.getElementById('pet-modal'),
             
             // Buttons
             achievementsBtn: document.getElementById('achievements-btn'),
@@ -132,6 +134,7 @@ class TreeGuardianGame {
         this.elements.leaderboardBtn.addEventListener('click', () => this.openModal('leaderboard'));
         this.elements.collectionBtn.addEventListener('click', () => this.openModal('collection'));
         this.elements.profileBtn.addEventListener('click', () => this.openModal('profile'));
+        this.elements.petBtn.addEventListener('click', () => this.openModal('pet'));
         
         // Modal close events
         document.querySelectorAll('.modal-close').forEach(btn => {
